@@ -15,6 +15,8 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/seed4jSampleApplication
     username: seed4jSampleApplication
+  jackson:
+    default-property-inclusion: non_absent
 kafka:
   bootstrap-servers: localhost:9092
   consumer:
@@ -27,3 +29,5 @@ kafka:
   producer:
     '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
     '[value.serializer]': org.apache.kafka.common.serialization.StringSerializer
+server:
+  port: 8080

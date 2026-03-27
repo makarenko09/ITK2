@@ -13,5 +13,6 @@
   <logger name="org.testcontainers" level="WARN" />
   <logger name="org.postgresql" level="WARN" />
   <logger name="org.jboss.logging" level="WARN" />
+  <logger name="org.springframework.web" level="ERROR" />
   <!-- seed4j-needle-logback-add-log -->
 </configuration>

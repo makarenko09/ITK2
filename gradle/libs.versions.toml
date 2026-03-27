@@ -4,6 +4,7 @@ bundles = {}
 	jib = "3.5.3"
 	kafka-clients = "4.2.0"
 	testcontainers = "2.0.3"
+	reflections = "0.10.2"
 	spring-boot = "4.0.3"
 	commons-lang3 = "3.20.0"
 
@@ -19,27 +20,12 @@ bundles = {}
 		[plugins.spring-boot.version]
 			ref = "spring-boot"
 
-	[libraries.hikariCP]
-		name = "HikariCP"
-		group = "com.zaxxer"
-
 	[libraries.testcontainers-testcontainers-postgresql]
 		name = "testcontainers-postgresql"
 		group = "org.testcontainers"
 
 		[libraries.testcontainers-testcontainers-postgresql.version]
 			ref = "testcontainers"
-
-	[libraries.spring-boot-starter]
-		name = "spring-boot-starter"
-		group = "org.springframework.boot"
-
-	[libraries.kafka-clients]
-		name = "kafka-clients"
-		group = "org.apache.kafka"
-
-		[libraries.kafka-clients.version]
-			ref = "kafka-clients"
 
 	[libraries.testcontainers-kafka]
 		name = "testcontainers-kafka"
@@ -52,9 +38,12 @@ bundles = {}
 		name = "spring-boot-starter-test"
 		group = "org.springframework.boot"
 
-	[libraries.postgresql]
-		name = "postgresql"
-		group = "org.postgresql"
+	[libraries.reflections]
+		name = "reflections"
+		group = "org.reflections"
+
+		[libraries.reflections.version]
+			ref = "reflections"
 
 	[libraries.spring-boot-dependencies]
 		name = "spring-boot-dependencies"
@@ -63,8 +52,39 @@ bundles = {}
 		[libraries.spring-boot-dependencies.version]
 			ref = "spring-boot"
 
+	[libraries.hikariCP]
+		name = "HikariCP"
+		group = "com.zaxxer"
+
+	[libraries.spring-boot-starter]
+		name = "spring-boot-starter"
+		group = "org.springframework.boot"
+
+	[libraries.kafka-clients]
+		name = "kafka-clients"
+		group = "org.apache.kafka"
+
+		[libraries.kafka-clients.version]
+			ref = "kafka-clients"
+
+	[libraries.postgresql]
+		name = "postgresql"
+		group = "org.postgresql"
+
+	[libraries.spring-boot-starter-validation]
+		name = "spring-boot-starter-validation"
+		group = "org.springframework.boot"
+
 	[libraries.spring-boot-configuration-processor]
 		name = "spring-boot-configuration-processor"
+		group = "org.springframework.boot"
+
+	[libraries.spring-boot-starter-webmvc-test]
+		name = "spring-boot-starter-webmvc-test"
+		group = "org.springframework.boot"
+
+	[libraries.spring-boot-starter-webmvc]
+		name = "spring-boot-starter-webmvc"
 		group = "org.springframework.boot"
 
 	[libraries.commons-lang3]

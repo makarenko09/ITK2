@@ -18,6 +18,7 @@ npm install
 
 ## Local environment
 
+- [Local server](http://localhost:8080)
 
 <!-- seed4j-needle-localEnvironment -->
 
@@ -41,5 +42,6 @@ docker compose -f src/main/docker/kafka.yml up -d
 - [PostgreSQL](documentation/postgresql.md)
 - [Logs Spy](documentation/logs-spy.md)
 - [Apache Kafka](documentation/apache-kafka.md)
+- [CORS configuration](documentation/cors-configuration.md)
 
 <!-- seed4j-needle-documentation -->
