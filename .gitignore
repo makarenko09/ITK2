@@ -138,3 +138,5 @@ Desktop.ini
 /build/
 /buildSrc/.gradle/
 /buildSrc/build/
+# Gradle Wrapper
+!gradle/wrapper/gradle-wrapper.jar
