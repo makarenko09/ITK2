@@ -31,3 +31,9 @@ kafka:
     '[value.serializer]': org.apache.kafka.common.serialization.StringSerializer
 server:
   port: 8080
+springdoc:
+  enable-native-support: true
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
+    tryItOutEnabled: true
