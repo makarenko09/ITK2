@@ -3,6 +3,7 @@ bundles = {}
 [versions]
 	jib = "3.5.3"
 	assertj = "3.27.7"
+	commons-lang3 = "3.20.0"
 	mockito = "5.23.0"
 	junit-jupiter = "6.0.3"
 
@@ -25,6 +26,13 @@ bundles = {}
 
 		[libraries.assertj.version]
 			ref = "assertj"
+
+	[libraries.commons-lang3]
+		name = "commons-lang3"
+		group = "org.apache.commons"
+
+		[libraries.commons-lang3.version]
+			ref = "commons-lang3"
 
 	[libraries.junit-engine]
 		name = "junit-jupiter-engine"

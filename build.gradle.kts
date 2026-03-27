@@ -63,6 +63,7 @@ val profiles = (project.findProperty("profiles") as String? ?: "")
 // seed4j-needle-profile-activation
 
 dependencies {
+  implementation(libs.commons.lang3)
   // seed4j-needle-gradle-implementation-dependencies
   // seed4j-needle-gradle-compile-dependencies
   // seed4j-needle-gradle-runtime-dependencies
