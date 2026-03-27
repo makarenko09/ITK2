@@ -2,10 +2,8 @@ bundles = {}
 
 [versions]
 	jib = "3.5.3"
-	assertj = "3.27.7"
+	spring-boot = "4.0.3"
 	commons-lang3 = "3.20.0"
-	mockito = "5.23.0"
-	junit-jupiter = "6.0.3"
 
 	[plugins.jib]
 		id = "com.google.cloud.tools.jib"
@@ -13,37 +11,31 @@ bundles = {}
 		[plugins.jib.version]
 			ref = "jib"
 
-	[libraries.junit-params]
-		name = "junit-jupiter-params"
-		group = "org.junit.jupiter"
+	[plugins.spring-boot]
+		id = "org.springframework.boot"
 
-		[libraries.junit-params.version]
-			ref = "junit-jupiter"
+		[plugins.spring-boot.version]
+			ref = "spring-boot"
 
-	[libraries.assertj]
-		name = "assertj-core"
-		group = "org.assertj"
+	[libraries.spring-boot-starter]
+		name = "spring-boot-starter"
+		group = "org.springframework.boot"
 
-		[libraries.assertj.version]
-			ref = "assertj"
+	[libraries.spring-boot-starter-test]
+		name = "spring-boot-starter-test"
+		group = "org.springframework.boot"
+
+	[libraries.spring-boot-dependencies]
+		name = "spring-boot-dependencies"
+		group = "org.springframework.boot"
+
+		[libraries.spring-boot-dependencies.version]
+			ref = "spring-boot"
+
+	[libraries.spring-boot-configuration-processor]
+		name = "spring-boot-configuration-processor"
+		group = "org.springframework.boot"
 
 	[libraries.commons-lang3]
 		name = "commons-lang3"
 		group = "org.apache.commons"
-
-		[libraries.commons-lang3.version]
-			ref = "commons-lang3"
-
-	[libraries.junit-engine]
-		name = "junit-jupiter-engine"
-		group = "org.junit.jupiter"
-
-		[libraries.junit-engine.version]
-			ref = "junit-jupiter"
-
-	[libraries.mockito]
-		name = "mockito-junit-jupiter"
-		group = "org.mockito"
-
-		[libraries.mockito.version]
-			ref = "mockito"

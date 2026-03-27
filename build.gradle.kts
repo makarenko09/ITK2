@@ -3,6 +3,7 @@
 plugins {
   java
   alias(libs.plugins.jib)
+  alias(libs.plugins.spring.boot)
   // seed4j-needle-gradle-plugins
 }
 
@@ -46,6 +47,12 @@ jib {
     permissions = mapOf("/entrypoint.sh" to "755")
   }
 }
+defaultTasks("bootRun")
+
+springBoot {
+  mainClass = "com.mycompany.myapp.Seed4jSampleApplicationApp"
+}
+
 // seed4j-needle-gradle-plugins-configurations
 
 repositories {
@@ -64,13 +71,14 @@ val profiles = (project.findProperty("profiles") as String? ?: "")
 
 dependencies {
   implementation(libs.commons.lang3)
+  implementation(platform(libs.spring.boot.dependencies))
+  implementation(libs.spring.boot.starter)
+  implementation(libs.spring.boot.configuration.processor)
   // seed4j-needle-gradle-implementation-dependencies
   // seed4j-needle-gradle-compile-dependencies
   // seed4j-needle-gradle-runtime-dependencies
-  testImplementation(libs.junit.engine)
-  testImplementation(libs.junit.params)
-  testImplementation(libs.assertj)
-  testImplementation(libs.mockito)
+  testImplementation(libs.spring.boot.starter.test)
+
   // seed4j-needle-gradle-test-dependencies
 }
 
