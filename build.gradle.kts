@@ -2,6 +2,7 @@
 
 plugins {
   java
+  alias(libs.plugins.jib)
   // seed4j-needle-gradle-plugins
 }
 
@@ -13,6 +14,38 @@ java {
   }
 }
 
+jib {
+  from {
+    image = "eclipse-temurin:25-jre-jammy"
+    platforms {
+      platform {
+        architecture = "amd64"
+        os = "linux"
+      }
+    }
+  }
+  to {
+    image = "seed4jSampleApplication:latest"
+  }
+  container {
+    entrypoint = listOf("bash", "-c", "/entrypoint.sh")
+    ports = listOf("8080")
+    environment = mapOf(
+     "SPRING_OUTPUT_ANSI_ENABLED" to "ALWAYS",
+     "SEED4J_SLEEP" to "0"
+    )
+    creationTime = "USE_CURRENT_TIMESTAMP"
+    user = "1000"
+  }
+  extraDirectories {
+    paths {
+      path {
+        setFrom("src/main/docker/jib")
+      }
+    }
+    permissions = mapOf("/entrypoint.sh" to "755")
+  }
+}
 // seed4j-needle-gradle-plugins-configurations
 
 repositories {

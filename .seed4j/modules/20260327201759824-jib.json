@@ -1,0 +1,14 @@
+{
+  "module" : "jib",
+  "date" : "2026-03-27T20:17:59.824793175Z",
+  "properties" : {
+    "packageName" : "com.mycompany.myapp",
+    "projectName" : "Seed4J Sample Application",
+    "baseName" : "seed4jSampleApplication",
+    "nodePackageManager" : "npm",
+    "serverPort" : 8080,
+    "endOfLine" : "lf",
+    "indentSize" : 2,
+    "springConfigurationFormat" : "yaml"
+  }
+}
