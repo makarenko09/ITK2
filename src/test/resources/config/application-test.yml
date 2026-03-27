@@ -10,3 +10,5 @@ spring:
     password: ''
     url: jdbc:tc:postgresql:18.3:///seed4jSampleApplication?TC_TMPFS=/testtmpfs:rw
     username: seed4jSampleApplication
+kafka:
+  bootstrap-servers: localhost:9092

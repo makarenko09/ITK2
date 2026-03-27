@@ -27,6 +27,10 @@ npm install
 docker compose -f src/main/docker/postgresql.yml up -d
 ```
 
+```bash
+docker compose -f src/main/docker/kafka.yml up -d
+```
+
 
 <!-- seed4j-needle-startupCommand -->
 
@@ -36,5 +40,6 @@ docker compose -f src/main/docker/postgresql.yml up -d
 - [Assertions](documentation/assertions.md)
 - [PostgreSQL](documentation/postgresql.md)
 - [Logs Spy](documentation/logs-spy.md)
+- [Apache Kafka](documentation/apache-kafka.md)
 
 <!-- seed4j-needle-documentation -->
