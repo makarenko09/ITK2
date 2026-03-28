@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.itk.task.shared.error.domain.Assert;
 import tech.itk.task.shared.pagination.domain.Seed4jSampleApplicationPage;
 import tech.itk.task.shared.pagination.domain.Seed4jSampleApplicationPageable;
+import tech.itk.task.task.application.exception.TaskNotFoundException;
+import tech.itk.task.task.application.exception.UserNotFoundException;
 import tech.itk.task.task.domain.Task;
 import tech.itk.task.task.domain.User;
 import tech.itk.task.task.domain.repository.TaskRepository;
@@ -54,7 +56,7 @@ public class TaskApplicationService {
     Assert.notNull("id", id);
     
     return taskRepository.findById(id)
-      .orElseThrow(() -> new IllegalArgumentException("Task not found with id: " + id));
+      .orElseThrow(() -> new TaskNotFoundException(id));
   }
 
   @Transactional(readOnly = true)
@@ -75,10 +77,10 @@ public class TaskApplicationService {
     Assert.notNull("assigneeId", assigneeId);
     
     Task task = taskRepository.findById(taskId)
-      .orElseThrow(() -> new IllegalArgumentException("Task not found with id: " + taskId));
+      .orElseThrow(() -> new TaskNotFoundException(taskId));
 
     User assignee = userRepository.findById(assigneeId)
-      .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + assigneeId));
+      .orElseThrow(() -> new UserNotFoundException(assigneeId));
 
     task.setAssignee(assignee);
     Task saved = taskRepository.save(task);
@@ -98,7 +100,7 @@ public class TaskApplicationService {
     Assert.notNull("status", status);
     
     Task task = taskRepository.findById(taskId)
-      .orElseThrow(() -> new IllegalArgumentException("Task not found with id: " + taskId));
+      .orElseThrow(() -> new TaskNotFoundException(taskId));
 
     task.setStatus(status);
     return taskRepository.save(task);
