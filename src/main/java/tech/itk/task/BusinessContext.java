@@ -1,4 +1,4 @@
-package com.mycompany.myapp;
+package tech.itk.task;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
