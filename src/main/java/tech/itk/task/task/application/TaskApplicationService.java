@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Application Service для оркестрации операций с задачами.
+ * Не содержит бизнес-логики, только координацию между портами.
+ */
 @Service
 @Transactional
 public class TaskApplicationService {
@@ -35,13 +39,17 @@ public class TaskApplicationService {
     this.producerTemplate = producerTemplate;
   }
 
+  /**
+   * Создать новую задачу.
+   */
   public Task createTask(String title, String description) {
     Assert.field("title", title).notBlank();
-    
-    Task task = new Task(title, description);
+
+    // Factory Method для создания задачи
+    Task task = Task.create(title, description);
     Task saved = taskRepository.save(task);
 
-    // Отправка события в Kafka через Camel
+    // Dispatch domain event через порт
     producerTemplate.sendBody("direct:task-created", Map.of(
       "taskId", saved.getId(),
       "title", saved.getTitle(),
@@ -51,18 +59,24 @@ public class TaskApplicationService {
     return saved;
   }
 
+  /**
+   * Получить задачу по ID.
+   */
   @Transactional(readOnly = true)
   public Task getTaskById(UUID id) {
     Assert.notNull("id", id);
-    
+
     return taskRepository.findById(id)
       .orElseThrow(() -> new TaskNotFoundException(id));
   }
 
+  /**
+   * Получить список задач с пагинацией.
+   */
   @Transactional(readOnly = true)
   public Seed4jSampleApplicationPage<Task> getTasks(Seed4jSampleApplicationPageable pageable) {
     Assert.notNull("pageable", pageable);
-    
+
     List<Task> tasks = taskRepository.findAll(pageable.offset(), pageable.pageSize());
     long total = taskRepository.count();
     return Seed4jSampleApplicationPage.builder(tasks)
@@ -72,20 +86,24 @@ public class TaskApplicationService {
       .build();
   }
 
+  /**
+   * Назначить исполнителя на задачу (бизнес-операция в domain).
+   */
   public Task assignTask(UUID taskId, UUID assigneeId) {
     Assert.notNull("taskId", taskId);
     Assert.notNull("assigneeId", assigneeId);
-    
+
     Task task = taskRepository.findById(taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
 
     User assignee = userRepository.findById(assigneeId)
       .orElseThrow(() -> new UserNotFoundException(assigneeId));
 
-    task.setAssignee(assignee);
+    // Бизнес-метод доменной модели
+    task.assignTo(assignee);
     Task saved = taskRepository.save(task);
 
-    // Отправка события в Kafka через Camel
+    // Dispatch domain event через порт
     producerTemplate.sendBody("direct:task-assigned", Map.of(
       "taskId", saved.getId(),
       "assigneeId", assignee.getId(),
@@ -95,14 +113,18 @@ public class TaskApplicationService {
     return saved;
   }
 
+  /**
+   * Изменить статус задачи (бизнес-операция в domain).
+   */
   public Task updateTaskStatus(UUID taskId, tech.itk.task.task.domain.TaskStatus status) {
     Assert.notNull("taskId", taskId);
     Assert.notNull("status", status);
-    
+
     Task task = taskRepository.findById(taskId)
       .orElseThrow(() -> new TaskNotFoundException(taskId));
 
-    task.setStatus(status);
+    // Бизнес-метод доменной модели
+    task.changeStatus(status);
     return taskRepository.save(task);
   }
 }

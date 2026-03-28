@@ -9,6 +9,10 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Агрегат User в доменной модели.
+ * Использует Factory Method для создания сущностей.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -23,36 +27,36 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
-  public User() {
+  /**
+   * JPA конструктор.
+   */
+  protected User() {
   }
 
-  public User(String name, String email) {
-    this.name = name;
-    this.email = email;
+  /**
+   * Factory Method для создания нового пользователя.
+   * @param name имя
+   * @param email email (уникальный)
+   * @return новый пользователь
+   */
+  public static User create(String name, String email) {
+    User user = new User();
+    user.name = name;
+    user.email = email;
+    return user;
   }
 
+  // Getters
   public UUID getId() {
     return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
   }
 
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public String getEmail() {
     return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
   }
 
   @Override
