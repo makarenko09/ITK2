@@ -2,15 +2,21 @@
 
 Сервис управления задачами с интеграцией Apache Kafka через Apache Camel.
 
+**Последнее обновление:** 28.03.2026
+
 ## Навигация по документации
 
 - [README](../README.md) — основной README проекта
+- [Task API ТЗ](task-api-tz.md) — соответствие техническому заданию
+- [REST API Valid](rest-api-valid.md) — валидные примеры запросов/ответов
+- [Applied Patterns](applied-patterns.md) — применённые паттерны
 - [PostgreSQL](postgresql.md) — настройка и использование БД
 - [Apache Kafka](apache-kafka.md) — настройка и использование Kafka
 - [Assertions](assertions.md) — утилиты валидации
 - [Package types](package-types.md) — аннотации пакетов
 - [Logs Spy](logs-spy.md) — тестирование логов
 - [CORS configuration](cors-configuration.md) — CORS настройка
+- [Hexagonal Architecture](origin/hexagonal-architecture.md) — архитектура проекта
 
 ---
 
@@ -18,18 +24,28 @@
 
 Реализован **Task API Service** — сервис управления задачами с интеграцией Apache Kafka через Apache Camel.
 
+**Ключевые изменения (28.03.2026):**
+- ✅ Spring Data JPA для репозиториев (автоматическая генерация CRUD)
+- ✅ Hibernate auto DDL (таблицы создаются автоматически)
+- ✅ Интеграционные тесты для REST API (11 тестов)
+- ✅ Factory Method паттерн для создания сущностей
+- ✅ Domain Model с бизнес-методами
+- ✅ Hexagonal Architecture
+
 ## Технические характеристики
 
 ### Стек технологий
 | Компонент | Версия | Описание |
 |-----------|--------|----------|
 | Java | 21 (toolchain) | Компиляция под Java 21, локально Java 25 |
-| Spring Boot | 4.0.3 | Фреймворк для приложения |
+| Spring Boot | 4.0.0 | Фреймворк для приложения |
 | Apache Camel | 4.10.0 | Интеграция с Kafka |
-| Hibernate | 6.6.13.Final | ORM для работы с БД (напрямую, без Spring Data JPA) |
+| Spring Data JPA | 4.0.0 | Автоматическая генерация репозиториев |
+| Hibernate | 6.6.13.Final | ORM для auto DDL |
+| HikariCP | 7.0.2 | Connection pooling |
 | PostgreSQL | 18.3 | Реляционная БД |
 | Apache Kafka | 4.2.0 | Брокер сообщений |
-| Gradle | 9.3.0 | Система сборки |
+| Gradle | 9.4.1 | Система сборки |
 | SDKMAN | - | Управление версиями JDK/Gradle |
 
 ### Примечание по версии Java
@@ -40,139 +56,113 @@
 
 ### Архитектурные решения
 
-#### 1. Hibernate без Spring Data JPA
-Согласно требованиям `template/task.md`, использован подход **JDBC через Hibernate напрямую**:
-- ✅ Сущности с `@Entity` аннотациями
-- ✅ Репозитории на основе `SessionFactory`
-- ❌ Без `JpaRepository` интерфейсов
-- ✅ Автоматическое создание таблиц через `hibernate.hbm2ddl.auto=update`
+#### 1. Spring Data JPA + Hibernate
+Использован подход **Spring Data JPA** для автоматической генерации репозиториев и **Hibernate** для auto DDL:
+- ✅ JPA Entity с аннотациями (@Entity, @Table)
+- ✅ Spring Data JPA репозитории (extends JpaRepository)
+- ✅ hibernate.hbm2ddl.auto=update (автоматическое создание таблиц)
+- ✅ Автоматическая генерация CRUD операций
 
 **Обоснование:**
-- Полный контроль над SQL-запросами
-- Минимальная зависимость от фреймворков
-- Гибкость в оптимизации запросов
+- Минимум кода для репозиториев
+- Автоматическое создание таблиц при запуске
+- Прозрачное управление транзакциями
+- Легкая миграция на production с Flyway/Liquibase
 
-**Примечание по Hibernate 6.x API:**
-В новых версиях Hibernate методы `saveOrUpdate()` и `delete(Object)` заменены на:
-- `merge()` — для сохранения/обновления сущностей
-- `remove()` — для удаления сущностей
+**Пример Spring Data JPA репозитория:**
+```java
+@Repository
+public interface TaskRepository extends JpaRepository<Task, UUID> {
+  // CRUD операции генерируются автоматически
+}
+```
 
-Также метод `get()` помечен как `@Deprecated`, рекомендуется использовать `getReference()` или `find()`.
+**Конфигурация Hibernate:**
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+```
 
 #### 2. Apache Camel для Kafka
 Использован Apache Camel для автоматизации отправки событий в Kafka:
 ```java
-from("direct:task-created")
-  .to("kafka:task-created?brokers={{kafka.bootstrap-servers}}");
+@Component
+public class KafkaTaskRoutes extends RouteBuilder {
 
-from("direct:task-assigned")
-  .to("kafka:task-assigned?brokers={{kafka.bootstrap-servers}}");
+  @Override
+  public void configure() {
+    from("direct:task-created")
+      .to("kafka:task-created?brokers={{kafka.bootstrap-servers}}");
+
+    from("direct:task-assigned")
+      .to("kafka:task-assigned?brokers={{kafka.bootstrap-servers}}");
+  }
+}
 ```
 
 **Преимущества:**
 - Декларативная конфигурация маршрутов
 - Встроенная поддержка error handling
 - Упрощённое тестирование
+- Автоматическое создание топиков
 
-#### 3. Валидация через Assert
+#### 3. Factory Method паттерн
+Создание сущностей через Factory Method:
+```java
+public class Task {
+
+  public static Task create(String title, String description) {
+    Task task = new Task();
+    task.title = title;
+    task.description = description;
+    task.status = TaskStatus.NEW;  // Гарантированный начальный статус
+    return task;
+  }
+
+  public void assignTo(User user) {
+    if (user == null) {
+      throw new IllegalArgumentException("Assignee cannot be null");
+    }
+    this.assignee = user;
+  }
+
+  public void changeStatus(TaskStatus status) {
+    if (status == null) {
+      throw new IllegalArgumentException("Status cannot be null");
+    }
+    this.status = status;
+  }
+}
+```
+
+#### 4. Валидация через Assert
 Вместо отдельных исключений используется `Assert` из `shared.error.domain`:
 ```java
 Assert.field("title", title).notBlank();
 Assert.notNull("id", id);
-
-// Или с выбрасыванием исключения
-taskRepository.findById(id)
-  .orElseThrow(() -> new IllegalArgumentException("Task not found with id: " + id));
 ```
 
-#### 4. Пагинация
+#### 5. Пагинация
 Использована существующая пагинация проекта:
 - `Seed4jSampleApplicationPage<T>` — domain
 - `Seed4jSampleApplicationPageable` — domain
 - `RestSeed4jSampleApplicationPage<T>` — REST wrapper
 - `RestSeed4jSampleApplicationPageable` — REST DTO с валидацией
 
-#### 5. Профиль local
+#### 6. Профиль local
 Конфигурация по умолчанию использует профиль `local`:
 ```yaml
 spring:
   profiles:
     active: local
 ```
-
-## План выполнения (Task List)
-
-### Этап 1: Настройка окружения ✅
-- [x] Настройка Java toolchain на Java 21
-- [x] Конфигурация `.sdkmanrc` с java=25.0.2-open
-- [x] Переименование проекта в `task-api` (tech.itk.task)
-- [x] Изменение порта на 8089
-
-### Этап 2: Модель данных ✅
-- [x] Сущность `Task` (id, title, description, status, assignee_id)
-- [x] Сущность `User` (id, name, email)
-- [x] Enum `TaskStatus` (NEW, IN_PROGRESS, DONE, CLOSED)
-- [x] Hibernate mapping без Spring Data JPA
-
-### Этап 3: Репозитории ✅
-- [x] `TaskRepository` на основе `SessionFactory`
-- [x] `UserRepository` на основе `SessionFactory`
-- [x] Методы: save, findById, findAll (с пагинацией), count, deleteById
-
-### Этап 4: REST API ✅
-- [x] `POST /api/tasks` — создание задачи
-- [x] `GET /api/tasks/{id}` — получение задачи по ID
-- [x] `GET /api/tasks?page=0&size=20` — получение задач с пагинацией
-- [x] `PATCH /api/tasks/{id}/assignee` — назначение исполнителя
-- [x] `PATCH /api/tasks/{id}/status` — смена статуса
-
-### Этап 5: Бизнес-логика ✅
-- [x] `TaskApplicationService` — базовые CRUD операции
-- [x] Пагинация через `Seed4jSampleApplicationPage`
-- [x] Отправка событий в Kafka через Camel (`task-created`, `task-assigned`)
-- [x] Валидация через `Assert`
-
-### Этап 6: Интеграция с Kafka ✅
-- [x] Настройка Apache Camel routes (`KafkaTaskRoutes.java`)
-- [x] Топик `task-created` — отправка при создании задачи
-- [x] Топик `task-assigned` — отправка при назначении исполнителя
-- [x] Конфигурация `kafka.yml` для Docker
-
-### Этап 7: Docker ✅
-- [x] Dockerfile для приложения (Jib) — настроен в `build.gradle.kts`
-- [x] `docker-compose.yml` (PostgreSQL + Kafka)
-- [x] Скрипты docker: `postgresql.yml`, `kafka.yml`
-- [ ] Сборка образа `task-api:latest` (требуется выполнить `jibDockerBuild`)
-
-### Этап 8: Тестирование ⏳
-- [ ] Unit-тесты для сервисов
-- [ ] Integration-тесты с Testcontainers
-- [ ] Cucumber сценарии для REST API
-- [ ] Проверка производительности (NFT: 10K пользователей, 100K задач)
-
-### Этап 9: Документация ✅
-- [x] Создание `documentation/task-api-implementation.md`
-- [ ] Swagger/OpenAPI спецификация (автоматически через springdoc)
-
-## Текущий статус
-
-**На текущий момент (27.03.2026):**
-
-✅ **Сборка успешна** — проект компилируется без ошибок
-
-**Реализованный функционал:**
-1. ✅ REST API (все 5 endpoints)
-2. ✅ Модель данных (Task, User)
-3. ✅ Репозитории на основе Hibernate SessionFactory
-4. ✅ Пагинация
-5. ✅ Отправка событий в Kafka через Apache Camel
-6. ✅ Camel маршруты настроены
-
-**Следующие шаги:**
-1. Поднять Docker-контейнеры (PostgreSQL + Kafka)
-2. Запустить приложение и проверить API
-3. Выполнить `jibDockerBuild` для сборки Docker-образа
-4. Добавить тесты
 
 ## Модель данных
 

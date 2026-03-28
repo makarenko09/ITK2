@@ -20,6 +20,10 @@ spring:
     hikari:
       auto-commit: false
       poolName: Hikari
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
     password: ''
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/task-api
