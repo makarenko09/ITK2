@@ -1,5 +1,19 @@
 # Task API Implementation Report (ITK2)
 
+Сервис управления задачами с интеграцией Apache Kafka через Apache Camel.
+
+## Навигация по документации
+
+- [README](../README.md) — основной README проекта
+- [PostgreSQL](postgresql.md) — настройка и использование БД
+- [Apache Kafka](apache-kafka.md) — настройка и использование Kafka
+- [Assertions](assertions.md) — утилиты валидации
+- [Package types](package-types.md) — аннотации пакетов
+- [Logs Spy](logs-spy.md) — тестирование логов
+- [CORS configuration](cors-configuration.md) — CORS настройка
+
+---
+
 ## Обзор реализации
 
 Реализован **Task API Service** — сервис управления задачами с интеграцией Apache Kafka через Apache Camel.

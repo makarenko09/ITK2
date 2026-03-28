@@ -1,12 +1,10 @@
 # LogsSpy
 
-LogsSpy is a JUnit5 extension used to assert logs.
+LogsSpy — JUnit5 расширение для тестирования логов.
 
-## Usage
+## Быстрый старт
 
-Sometimes it's a good idea to test logs (as they can be important information for our system). It's not always necessary though, as for everything, it depends!
-
-So, here's how to use it:
+### Использование в тестах
 
 ```java
 @UnitTest
@@ -18,6 +16,39 @@ class MyTest {
 
   @Test
   void shouldDoStuff() {
+    // Тестирование логов
+    logs.shouldHave(Level.INFO, "Message");
+  }
+}
+```
+
+## Документация
+
+- [Task API Implementation](task-api-implementation.md) — полная документация
+- [README](../README.md) — основной README проекта
+
+---
+
+## Оригинальная документация
+
+LogsSpy is a JUnit5 extension used to assert logs.
+
+## Usage
+
+```java
+@UnitTest
+@ExtendWith(LogsSpyExtension.class)
+class MyTest {
+
+  @Logs
+  private LogsSpy logs;
+
+  @Test
+  void shouldDoStuff() {
+    logs.shouldHave(Level.INFO, "Message");
+  }
+}
+```
     doingStuff();
 
     logs.shouldHave(Level.INFO, "some stuff");
