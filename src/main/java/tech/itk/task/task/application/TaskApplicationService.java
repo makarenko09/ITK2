@@ -10,8 +10,8 @@ import tech.itk.task.task.application.exception.TaskNotFoundException;
 import tech.itk.task.task.application.exception.UserNotFoundException;
 import tech.itk.task.task.domain.Task;
 import tech.itk.task.task.domain.User;
-import tech.itk.task.task.infrastructure.secondary.repository.TaskRepository;
-import tech.itk.task.task.infrastructure.secondary.repository.UserRepository;
+import tech.itk.task.task.domain.repository.TaskRepository;
+import tech.itk.task.task.domain.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
