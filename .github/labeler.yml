@@ -1,0 +1,72 @@
+# Авто-лейблы для PR на основе изменённых файлов
+
+# Типы изменений
+feat:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/main/java/**/api/**'
+          - 'src/main/java/**/endpoint/**'
+          - 'src/main/java/**/controller/**'
+fix:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*Fix*'
+          - '**/*fix*'
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'documentation/**/*'
+test:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/test/**/*'
+build:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'build.gradle.kts'
+          - 'settings.gradle.kts'
+          - 'gradle.properties'
+          - 'package.json'
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**/*'
+          - '.gitlab-ci.yml'
+          - 'docker-compose.yml'
+          - 'Dockerfile'
+chore:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.editorconfig'
+          - '.gitignore'
+          - '.lintstagedrc.cjs'
+          - '.npmrc'
+          - '.sdkmanrc'
+
+# Компоненты
+java:
+  - changed-files:
+      - any-glob-to-any-file: 'src/main/java/**/*'
+kotlin:
+  - changed-files:
+      - any-glob-to-any-file: 'src/main/kotlin/**/*'
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: 'src/main/webapp/**/*'
+database:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/main/resources/db/**/*'
+          - '**/*.sql'
+kafka:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/kafka/**/*'
+          - '**/camel/**/*'
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/main/docker/**/*'
+          - 'docker-compose.yml'
+          - 'Dockerfile'
