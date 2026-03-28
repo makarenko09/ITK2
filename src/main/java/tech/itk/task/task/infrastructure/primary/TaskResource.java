@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import tech.itk.task.shared.pagination.domain.Seed4jSampleApplicationPageable;
 import tech.itk.task.shared.pagination.infrastructure.primary.RestSeed4jSampleApplicationPage;
 import tech.itk.task.shared.pagination.infrastructure.primary.RestSeed4jSampleApplicationPageable;
 import tech.itk.task.task.application.TaskApplicationService;
@@ -36,26 +35,23 @@ public class TaskResource {
 
   @GetMapping
   public ResponseEntity<RestSeed4jSampleApplicationPage<RestTask>> getTasks(
-    @Validated RestSeed4jSampleApplicationPageable pageable
-  ) {
+      @Validated RestSeed4jSampleApplicationPageable pageable) {
     var page = taskService.getTasks(pageable.toPageable());
     return ResponseEntity.ok(RestSeed4jSampleApplicationPage.from(page, RestTask::from));
   }
 
   @PatchMapping("/{id}/assignee")
   public ResponseEntity<RestTask> assignTask(
-    @PathVariable UUID id,
-    @Valid @RequestBody AssignTaskRequest request
-  ) {
+      @PathVariable UUID id,
+      @Valid @RequestBody AssignTaskRequest request) {
     Task task = taskService.assignTask(id, request.assigneeId());
     return ResponseEntity.ok(RestTask.from(task));
   }
 
   @PatchMapping("/{id}/status")
   public ResponseEntity<RestTask> updateTaskStatus(
-    @PathVariable UUID id,
-    @Valid @RequestBody UpdateTaskStatusRequest request
-  ) {
+      @PathVariable UUID id,
+      @Valid @RequestBody UpdateTaskStatusRequest request) {
     Task task = taskService.updateTaskStatus(id, request.status());
     return ResponseEntity.ok(RestTask.from(task));
   }
