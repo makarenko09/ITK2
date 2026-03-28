@@ -1,1 +1,1 @@
-rootProject.name = "seed4j-sample-application"
+rootProject.name = "task-api"

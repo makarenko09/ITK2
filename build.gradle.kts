@@ -26,11 +26,11 @@ jib {
     }
   }
   to {
-    image = "seed4jSampleApplication:latest"
+    image = "task-api:latest"
   }
   container {
     entrypoint = listOf("bash", "-c", "/entrypoint.sh")
-    ports = listOf("8080")
+    ports = listOf("8089")
     environment = mapOf(
      "SPRING_OUTPUT_ANSI_ENABLED" to "ALWAYS",
      "SEED4J_SLEEP" to "0"
@@ -50,17 +50,18 @@ jib {
 defaultTasks("bootRun")
 
 springBoot {
-  mainClass = "com.mycompany.myapp.Seed4jSampleApplicationApp"
+  mainClass = "tech.itk.task.TaskApiApp"
 }
 
 // seed4j-needle-gradle-plugins-configurations
 
 repositories {
   mavenCentral()
+  maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
   // seed4j-needle-gradle-repositories
 }
 
-group = "com.mycompany.myapp"
+group = "tech.itk.task"
 version = "0.0.1-SNAPSHOT"
 
 val profiles = (project.findProperty("profiles") as String? ?: "")
@@ -85,6 +86,7 @@ dependencies {
   implementation(libs.camel.kafka)
   implementation(libs.camel.jdbc)
   implementation(libs.spring.boot.starter.jdbc)
+  implementation(libs.hibernate.core)
   // seed4j-needle-gradle-implementation-dependencies
   // seed4j-needle-gradle-compile-dependencies
   runtimeOnly(libs.postgresql)

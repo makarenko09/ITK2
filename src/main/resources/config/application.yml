@@ -1,11 +1,20 @@
 logging:
   level:
-    com:
-      mycompany:
-        myapp: INFO
+    tech:
+      itk:
+        task: DEBUG
+    org:
+      hibernate:
+        SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
 spring:
   application:
-    name: seed4jSampleApplication
+    name: task-api
+  profiles:
+    active: local
   datasource:
     driver-class-name: org.postgresql.Driver
     hikari:
@@ -13,24 +22,29 @@ spring:
       poolName: Hikari
     password: ''
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/seed4jSampleApplication
-    username: seed4jSampleApplication
+    url: jdbc:postgresql://localhost:5432/task-api
+    username: task-api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
   jackson:
     default-property-inclusion: non_absent
 kafka:
   bootstrap-servers: localhost:9092
-  consumer:
-    '[auto.offset.reset]': earliest
-    '[group.id]': myapp
-    '[key.deserializer]': org.apache.kafka.common.serialization.StringDeserializer
-    '[value.deserializer]': org.apache.kafka.common.serialization.StringDeserializer
-  polling:
-    timeout: 10000
   producer:
     '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
     '[value.serializer]': org.apache.kafka.common.serialization.StringSerializer
+camel:
+  springboot:
+    main-run-controller: true
+    name: task-api
 server:
-  port: 8080
+  port: 8089
 springdoc:
   enable-native-support: true
   swagger-ui:
