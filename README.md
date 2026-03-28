@@ -2,7 +2,7 @@
 
 Сервис управления задачами с интеграцией Apache Kafka через Apache Camel.
 
-**Стек:** Java 21, Spring Boot 4.0, PostgreSQL, Kafka, Spring JDBC, Apache Camel
+**Стек:** Java 21, Spring Boot 4.0, PostgreSQL, Kafka, Spring Data JPA, Hibernate, Apache Camel
 
 ## Quick Start
 
@@ -10,7 +10,7 @@
 # Запуск зависимостей
 docker compose up -d
 
-# Запуск приложения
+# Запуск приложения (таблицы создадутся автоматически)
 ./gradlew bootRun
 
 # Проверка API
@@ -112,21 +112,22 @@ docker run -p 8089:8089 task-api:latest
 ## Project Status
 
 ### Реализовано ✅
-- ✅ Модель данных (Task, User, TaskStatus) — POJO без JPA
+- ✅ Модель данных (Task, User, TaskStatus) — JPA Entity
 - ✅ REST API (5 endpoints)
-- ✅ Репозитории на Spring JDBC (JdbcTemplate) — напрямую без JPA
+- ✅ Spring Data JPA репозитории (автоматическая генерация CRUD)
+- ✅ Hibernate auto DDL (таблицы создаются автоматически)
 - ✅ Сервисный слой с Assert валидацией
 - ✅ Apache Camel маршруты для Kafka
 - ✅ Docker конфигурация (PostgreSQL + Kafka)
 - ✅ Java 21 toolchain (локально Java 25)
-- ✅ Интеграционные тесты (TaskResourceIT)
+- ✅ Интеграционные тесты (TaskResourceIT — 11 тестов)
 - ✅ NFT: HikariCP pool (max=20), индексы БД для 100к задач
 
 ### Архитектура
 - ✅ Hexagonal Architecture (domain/application/infrastructure)
 - ✅ Factory Method для создания сущностей
-- ✅ Domain Model с бизнес-методами
-- ✅ Repository порты в domain
+- ✅ Domain Model с бизнес-методами (assignTo, changeStatus)
+- ✅ Spring Data JPA для репозиториев
 
 <!-- seed4j-needle-projectStatus -->
 
@@ -149,6 +150,7 @@ docker run -p 8089:8089 task-api:latest
 | Пользователи | до 10 000 | HikariCP pool (max=20, min-idle=5) |
 | Задачи | до 100 000 | Индексы БД (idx_tasks_status, idx_tasks_assignee) |
 | Connection pool | 20 соединений | HikariCP 7.0.2 |
+| Auto DDL | update | Hibernate hbm2ddl |
 
 ### Индексы БД
 ```sql

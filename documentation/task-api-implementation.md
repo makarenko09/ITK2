@@ -25,7 +25,8 @@
 Реализован **Task API Service** — сервис управления задачами с интеграцией Apache Kafka через Apache Camel.
 
 **Ключевые изменения (28.03.2026):**
-- ✅ Переход на Spring JDBC (JdbcTemplate) — напрямую без JPA/Hibernate
+- ✅ Spring Data JPA для репозиториев (автоматическая генерация CRUD)
+- ✅ Hibernate auto DDL (таблицы создаются автоматически)
 - ✅ Интеграционные тесты для REST API (11 тестов)
 - ✅ Factory Method паттерн для создания сущностей
 - ✅ Domain Model с бизнес-методами
@@ -39,7 +40,8 @@
 | Java | 21 (toolchain) | Компиляция под Java 21, локально Java 25 |
 | Spring Boot | 4.0.0 | Фреймворк для приложения |
 | Apache Camel | 4.10.0 | Интеграция с Kafka |
-| Spring JDBC | 4.0.0 | Прямой доступ к БД (JdbcTemplate) |
+| Spring Data JPA | 4.0.0 | Автоматическая генерация репозиториев |
+| Hibernate | 6.6.13.Final | ORM для auto DDL |
 | HikariCP | 7.0.2 | Connection pooling |
 | PostgreSQL | 18.3 | Реляционная БД |
 | Apache Kafka | 4.2.0 | Брокер сообщений |
@@ -54,45 +56,38 @@
 
 ### Архитектурные решения
 
-#### 1. Spring JDBC без JPA
-Согласно требованиям ТЗ, использован подход **JDBC напрямую через JdbcTemplate**:
-- ✅ POJO модели без JPA аннотаций
-- ✅ Репозитории на основе JdbcTemplate
-- ✅ RowMapper для маппинга ResultSet
-- ✅ SQL скрипт инициализации (V1__init_schema.sql)
+#### 1. Spring Data JPA + Hibernate
+Использован подход **Spring Data JPA** для автоматической генерации репозиториев и **Hibernate** для auto DDL:
+- ✅ JPA Entity с аннотациями (@Entity, @Table)
+- ✅ Spring Data JPA репозитории (extends JpaRepository)
+- ✅ hibernate.hbm2ddl.auto=update (автоматическое создание таблиц)
+- ✅ Автоматическая генерация CRUD операций
 
 **Обоснование:**
-- Полный контроль над SQL-запросами
-- Отсутствие overhead JPA/Hibernate
-- Лучшая производительность для NFT
+- Минимум кода для репозиториев
+- Автоматическое создание таблиц при запуске
 - Прозрачное управление транзакциями
+- Легкая миграция на production с Flyway/Liquibase
 
-**Пример JDBC репозитория:**
+**Пример Spring Data JPA репозитория:**
 ```java
 @Repository
-public class JdbcTaskRepository implements TaskRepository {
-
-  private final JdbcTemplate jdbcTemplate;
-
-  public JdbcTaskRepository(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
-  }
-
-  @Override
-  public Task save(Task task) {
-    if (task.getId() == null) {
-      UUID id = UUID.randomUUID();
-      jdbcTemplate.update(
-        "INSERT INTO tasks (id, title, description, status, assignee_id) VALUES (?, ?, ?, ?, ?)",
-        id, task.getTitle(), task.getDescription(), task.getStatus().name(),
-        task.getAssignee() != null ? task.getAssignee().getId() : null
-      );
-      task.setId(id);
-      return task;
-    }
-    // UPDATE logic...
-  }
+public interface TaskRepository extends JpaRepository<Task, UUID> {
+  // CRUD операции генерируются автоматически
 }
+```
+
+**Конфигурация Hibernate:**
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
 ```
 
 #### 2. Apache Camel для Kafka
