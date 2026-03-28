@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "The application will start in ${SEED4J_SLEEP}s..." && sleep ${SEED4J_SLEEP}
+exec java ${JAVA_OPTS} -noverify -XX:+AlwaysPreTouch -Djava.security.egd=file:/dev/./urandom -cp /app/resources/:/app/classes/:/app/libs/* "com.mycompany.myapp.Seed4jSampleApplicationApp"  "$@"

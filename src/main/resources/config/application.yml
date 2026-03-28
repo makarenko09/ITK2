@@ -1,0 +1,53 @@
+logging:
+  level:
+    tech:
+      itk:
+        task: DEBUG
+    org:
+      hibernate:
+        SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
+spring:
+  application:
+    name: task-api
+  profiles:
+    active: local
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+      poolName: Hikari
+    password: ''
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/task-api
+    username: task-api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  jackson:
+    default-property-inclusion: non_absent
+kafka:
+  bootstrap-servers: localhost:9092
+  producer:
+    '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
+    '[value.serializer]': org.apache.kafka.common.serialization.StringSerializer
+camel:
+  springboot:
+    main-run-controller: true
+    name: task-api
+server:
+  port: 8089
+springdoc:
+  enable-native-support: true
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
+    tryItOutEnabled: true
