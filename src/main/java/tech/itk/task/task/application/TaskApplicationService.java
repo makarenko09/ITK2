@@ -10,8 +10,8 @@ import tech.itk.task.task.application.exception.TaskNotFoundException;
 import tech.itk.task.task.application.exception.UserNotFoundException;
 import tech.itk.task.task.domain.Task;
 import tech.itk.task.task.domain.User;
-import tech.itk.task.task.domain.repository.TaskRepository;
-import tech.itk.task.task.domain.repository.UserRepository;
+import tech.itk.task.task.infrastructure.secondary.repository.TaskRepository;
+import tech.itk.task.task.infrastructure.secondary.repository.UserRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -30,10 +30,9 @@ public class TaskApplicationService {
   private final ProducerTemplate producerTemplate;
 
   public TaskApplicationService(
-    TaskRepository taskRepository,
-    UserRepository userRepository,
-    ProducerTemplate producerTemplate
-  ) {
+      TaskRepository taskRepository,
+      UserRepository userRepository,
+      ProducerTemplate producerTemplate) {
     this.taskRepository = taskRepository;
     this.userRepository = userRepository;
     this.producerTemplate = producerTemplate;
@@ -51,10 +50,9 @@ public class TaskApplicationService {
 
     // Dispatch domain event через порт
     producerTemplate.sendBody("direct:task-created", Map.of(
-      "taskId", saved.getId(),
-      "title", saved.getTitle(),
-      "status", saved.getStatus().name()
-    ));
+        "taskId", saved.getId(),
+        "title", saved.getTitle(),
+        "status", saved.getStatus().name()));
 
     return saved;
   }
@@ -67,7 +65,7 @@ public class TaskApplicationService {
     Assert.notNull("id", id);
 
     return taskRepository.findById(id)
-      .orElseThrow(() -> new TaskNotFoundException(id));
+        .orElseThrow(() -> new TaskNotFoundException(id));
   }
 
   /**
@@ -80,10 +78,10 @@ public class TaskApplicationService {
     List<Task> tasks = taskRepository.findAll(pageable.offset(), pageable.pageSize());
     long total = taskRepository.count();
     return Seed4jSampleApplicationPage.builder(tasks)
-      .currentPage(pageable.page())
-      .pageSize(pageable.pageSize())
-      .totalElementsCount(total)
-      .build();
+        .currentPage(pageable.page())
+        .pageSize(pageable.pageSize())
+        .totalElementsCount(total)
+        .build();
   }
 
   /**
@@ -94,10 +92,10 @@ public class TaskApplicationService {
     Assert.notNull("assigneeId", assigneeId);
 
     Task task = taskRepository.findById(taskId)
-      .orElseThrow(() -> new TaskNotFoundException(taskId));
+        .orElseThrow(() -> new TaskNotFoundException(taskId));
 
     User assignee = userRepository.findById(assigneeId)
-      .orElseThrow(() -> new UserNotFoundException(assigneeId));
+        .orElseThrow(() -> new UserNotFoundException(assigneeId));
 
     // Бизнес-метод доменной модели
     task.assignTo(assignee);
@@ -105,10 +103,9 @@ public class TaskApplicationService {
 
     // Dispatch domain event через порт
     producerTemplate.sendBody("direct:task-assigned", Map.of(
-      "taskId", saved.getId(),
-      "assigneeId", assignee.getId(),
-      "assigneeEmail", assignee.getEmail()
-    ));
+        "taskId", saved.getId(),
+        "assigneeId", assignee.getId(),
+        "assigneeEmail", assignee.getEmail()));
 
     return saved;
   }
@@ -121,7 +118,7 @@ public class TaskApplicationService {
     Assert.notNull("status", status);
 
     Task task = taskRepository.findById(taskId)
-      .orElseThrow(() -> new TaskNotFoundException(taskId));
+        .orElseThrow(() -> new TaskNotFoundException(taskId));
 
     // Бизнес-метод доменной модели
     task.changeStatus(status);

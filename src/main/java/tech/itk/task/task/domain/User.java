@@ -1,36 +1,23 @@
 package tech.itk.task.task.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Агрегат User в доменной модели.
  * Использует Factory Method для создания сущностей.
+ * POJO без JPA аннотаций (JDBC напрямую).
  */
-@Entity
-@Table(name = "users")
 public class User {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
-
-  @Column(nullable = false)
   private String name;
-
-  @Column(nullable = false, unique = true)
   private String email;
 
   /**
-   * JPA конструктор.
+   * Конструктор по умолчанию.
    */
-  protected User() {
+  public User() {
   }
 
   /**
@@ -57,6 +44,19 @@ public class User {
 
   public String getEmail() {
     return email;
+  }
+
+  // Setters (требуются для JDBC RowMapper)
+  public void setId(UUID id) {
+    this.id = id;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
   @Override

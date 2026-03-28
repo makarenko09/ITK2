@@ -4,12 +4,8 @@ logging:
       itk:
         task: DEBUG
     org:
-      hibernate:
-        SQL: DEBUG
-      type:
-        descriptor:
-          sql:
-            BasicBinder: TRACE
+      springframework:
+        jdbc: DEBUG
 spring:
   application:
     name: task-api
@@ -20,18 +16,14 @@ spring:
     hikari:
       auto-commit: false
       poolName: Hikari
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
     password: ''
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/task-api
     username: task-api
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
   jackson:
     default-property-inclusion: non_absent
 kafka:
