@@ -11,13 +11,13 @@ plugins {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(25)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
 jib {
   from {
-    image = "eclipse-temurin:25-jre-jammy"
+    image = "eclipse-temurin:21-jre-jammy"
     platforms {
       platform {
         architecture = "amd64"
@@ -81,6 +81,10 @@ dependencies {
   implementation(libs.spring.boot.starter.webmvc)
   implementation(libs.springdoc.openapi.starter.webmvc.ui)
   implementation(libs.springdoc.openapi.starter.webmvc.api)
+  implementation(libs.camel.spring.boot.starter)
+  implementation(libs.camel.kafka)
+  implementation(libs.camel.jdbc)
+  implementation(libs.spring.boot.starter.jdbc)
   // seed4j-needle-gradle-implementation-dependencies
   // seed4j-needle-gradle-compile-dependencies
   runtimeOnly(libs.postgresql)

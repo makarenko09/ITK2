@@ -8,6 +8,7 @@ bundles = {}
 	spring-boot = "4.0.3"
 	commons-lang3 = "3.20.0"
 	springdoc-openapi = "3.0.2"
+	camel = "4.10.0"
 
 	[plugins.jib]
 		id = "com.google.cloud.tools.jib"
@@ -105,3 +106,28 @@ bundles = {}
 	[libraries.commons-lang3]
 		name = "commons-lang3"
 		group = "org.apache.commons"
+
+	[libraries.camel-spring-boot-starter]
+		name = "camel-spring-boot-starter"
+		group = "org.apache.camel.springboot"
+
+		[libraries.camel-spring-boot-starter.version]
+			ref = "camel"
+
+	[libraries.camel-kafka]
+		name = "camel-kafka"
+		group = "org.apache.camel"
+
+		[libraries.camel-kafka.version]
+			ref = "camel"
+
+	[libraries.camel-jdbc]
+		name = "camel-spring-jdbc-starter"
+		group = "org.apache.camel.springboot"
+
+		[libraries.camel-jdbc.version]
+			ref = "camel"
+
+	[libraries.spring-boot-starter-jdbc]
+		name = "spring-boot-starter-jdbc"
+		group = "org.springframework.boot"
