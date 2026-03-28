@@ -4,8 +4,12 @@ logging:
       itk:
         task: DEBUG
     org:
-      springframework:
-        jdbc: DEBUG
+      hibernate:
+        SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
 spring:
   application:
     name: task-api
@@ -24,6 +28,14 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5432/task-api
     username: task-api
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
   jackson:
     default-property-inclusion: non_absent
 kafka:

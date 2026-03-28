@@ -1,25 +1,49 @@
 package tech.itk.task.task.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Агрегат Task в доменной модели.
  * Использует Factory Method для создания сущностей.
- * POJO без JPA аннотаций (JDBC напрямую).
+ * JPA Entity для автоматического создания таблиц.
  */
+@Entity
+@Table(name = "tasks")
 public class Task {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+
+  @Column(nullable = false)
   private String title;
+
+  @Column(columnDefinition = "TEXT")
   private String description;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private TaskStatus status = TaskStatus.NEW;
+
+  @ManyToOne(optional = true)
+  @JoinColumn(name = "assignee_id")
   private User assignee;
 
   /**
-   * Конструктор по умолчанию.
+   * Конструктор по умолчанию (требуется для JPA).
    */
-  public Task() {
+  protected Task() {
   }
 
   /**
@@ -79,7 +103,7 @@ public class Task {
     return assignee;
   }
 
-  // Setters (требуются для JDBC RowMapper)
+  // Setters (требуются для JPA/Hibernate)
   public void setId(UUID id) {
     this.id = id;
   }

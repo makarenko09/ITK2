@@ -86,6 +86,8 @@ dependencies {
   implementation(libs.camel.kafka)
   implementation(libs.camel.jdbc)
   implementation(libs.spring.boot.starter.jdbc)
+  implementation(libs.spring.boot.starter.data.jpa)
+  implementation(libs.hibernate.core)
   // seed4j-needle-gradle-implementation-dependencies
   // seed4j-needle-gradle-compile-dependencies
   runtimeOnly(libs.postgresql)

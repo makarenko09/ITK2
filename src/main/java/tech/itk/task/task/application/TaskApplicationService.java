@@ -1,6 +1,7 @@
 package tech.itk.task.task.application;
 
 import org.apache.camel.ProducerTemplate;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.itk.task.shared.error.domain.Assert;
@@ -10,8 +11,8 @@ import tech.itk.task.task.application.exception.TaskNotFoundException;
 import tech.itk.task.task.application.exception.UserNotFoundException;
 import tech.itk.task.task.domain.Task;
 import tech.itk.task.task.domain.User;
-import tech.itk.task.task.domain.repository.TaskRepository;
-import tech.itk.task.task.domain.repository.UserRepository;
+import tech.itk.task.task.infrastructure.secondary.TaskRepository;
+import tech.itk.task.task.infrastructure.secondary.UserRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -75,12 +76,13 @@ public class TaskApplicationService {
   public Seed4jSampleApplicationPage<Task> getTasks(Seed4jSampleApplicationPageable pageable) {
     Assert.notNull("pageable", pageable);
 
-    List<Task> tasks = taskRepository.findAll(pageable.offset(), pageable.pageSize());
-    long total = taskRepository.count();
-    return Seed4jSampleApplicationPage.builder(tasks)
+    var page = taskRepository.findAll(
+      PageRequest.of(pageable.page(), pageable.pageSize())
+    );
+    return Seed4jSampleApplicationPage.builder(page.getContent())
         .currentPage(pageable.page())
         .pageSize(pageable.pageSize())
-        .totalElementsCount(total)
+        .totalElementsCount(page.getTotalElements())
         .build();
   }
 
